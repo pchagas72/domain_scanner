@@ -73,7 +73,12 @@ def run_subdomain_scan(domain, wordlist_file, num_threads, helper):
 
     if discovered_subdomains:
         output_file = f'{domain}_subdomains.txt'
-        with open(output_file, 'w', encoding='utf-8') as f:
-            for sub in sorted(discovered_subdomains):
-                f.write(sub + '\n')
-            log_success(f'[+] Results saved to {output_file}', helper)
+        try:
+            with open(output_file, 'w', encoding='utf-8') as f:
+                for sub in sorted(discovered_subdomains):
+                    f.write(sub + '\n')
+                log_success(f'[+] Subdomain results saved to {output_file}', helper)
+        except IOError:
+            log_error(f"Could not write to subdomain output file: {output_file}", helper)
+
+    return discovered_subdomains # Add this return statement at the end

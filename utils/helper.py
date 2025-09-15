@@ -1,5 +1,6 @@
 import os
 import re
+import socket
 from dotenv import dotenv_values
 
 
@@ -43,6 +44,22 @@ class Helper:
                 self.color_red,
             )
 
+def resolve_domain(domain, helper):
+    """
+    Tries to resolve a domain to an IP. If it fails, prepends 'www.' and tries again.
+    Returns the IP address and the name that was successfully resolved.
+    """
+    try:
+        ip_addr = socket.gethostbyname(domain)
+        return ip_addr, domain
+    except socket.gaierror:
+        log_warning(f"Could not resolve {domain}, trying www.{domain}", helper)
+        try:
+            www_domain = f"www.{domain}"
+            ip_addr = socket.gethostbyname(www_domain)
+            return ip_addr, www_domain
+        except socket.gaierror:
+            return None, None
 
 def log_info(message, helper):
     helper.log(message, helper.color_blue)
